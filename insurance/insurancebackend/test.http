@@ -1,0 +1,8 @@
+DELETE  http://localhost:4000/app/insurance/active/606f22543b54e22d50e9be10
+Content-Type: application/json
+
+# {
+#     "value": Math.random() ,
+#     "name": "Fixed assets",
+#     "date": "2021-01-06T12:48:40.632+00:00"
+# }
