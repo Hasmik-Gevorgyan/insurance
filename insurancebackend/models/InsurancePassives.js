@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const InsuranceActives = new mongoose.Schema({
+const InsurancePassives = new mongoose.Schema({
   value: {
     type: Number,
     required: true,
@@ -9,14 +9,10 @@ const InsuranceActives = new mongoose.Schema({
     type: String,
     required: true,
   },
-  profit: {
-    type: Number,
-    required: true,
-  },
   date: {
     type: Date,
     default: Date.now,
   },
 });
 
-module.exports = mongoose.model('actives', InsuranceActives);
+module.exports = mongoose.model('passives', InsurancePassives);
