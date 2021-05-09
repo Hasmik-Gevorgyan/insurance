@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { themes } from '../../styling';
 import '@carbon/charts/styles.css';
-import { PieChart, LineChart } from '@carbon/charts-react';
-import { Button } from 'carbon-components-react';
 import Header from './Header';
 import { getDateFormat, checkLastFriday } from '../../helperFunctions';
 import BodyForPortfelio from './Body';
 import { regression } from '../../functional/allPossibleRegressions';
 import OptimizeModal from './OptimizeModal';
+const SimpleSimplex = require('simple-simplex');
+
 
 const StyledActiveBody = styled.div`
   margin-top: ${themes.spacing.spacing04};
@@ -36,6 +36,8 @@ interface IOptimisationState {
   tableData: any;
   interval: kindIntervals;
   regression: any;
+  isOpenModal: boolean;
+  simplex: any;
 }
 
 class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
@@ -49,6 +51,8 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
       tableData: [],
       interval: 'week',
       regression: {},
+      isOpenModal: false,
+      simplex: {}
     };
     this.GetActivesTypes = this.GetActivesTypes.bind(this);
     this.GetActivesTransactions = this.GetActivesTransactions.bind(this);
@@ -58,6 +62,40 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
 
   componentDidMount() {
     this.GetActivesTypes();
+    const solver = new SimpleSimplex({
+      objective: {
+        a: 70,
+        b: 210,
+        c: 140,
+      },
+      constraints: [
+        {
+          namedVector: { a: 1, b: 1, c: 1 },
+          constraint: '<=',
+          constant: 100,
+        },
+        {
+          namedVector: { a: 5, b: 4, c: 4 },
+          constraint: '<=',
+          constant: 480,
+        },
+        {
+          namedVector: { a: 40, b: 20, c: 30 },
+          constraint: '<=',
+          constant: 3200,
+        },
+      ],
+      optimizationType: 'max',
+    });
+
+    // call the solve method with a method name
+    const result = solver.solve({
+      methodName: 'simplex',
+    });
+
+    this.setState({
+      simplex: result,
+    })
   }
 
   async GetActivesTypes() {
@@ -212,6 +250,11 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
     });
   };
 
+  toggleModal = () =>{
+    this.setState({
+      isOpenModal: !this.state.isOpenModal,
+    })
+  }
   render() {
     return (
       <div className="container">
@@ -225,9 +268,14 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
           data={this.state.tableData}
           headerData={this.state.activeTypes}
           regression={this.state.regression}
+          toggleModal = {this.toggleModal}
           // chartData = {this.state.actives}
         />
-        <OptimizeModal open={true} />
+        {this.state.isOpenModal &&
+        <OptimizeModal open={this.state.isOpenModal} 
+          toggleModal = {this.toggleModal}
+          simplex = {this.state.simplex}
+        />}
       </div>
     );
   }

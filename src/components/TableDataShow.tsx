@@ -21,6 +21,7 @@ interface IHeaderProps {
   isChangable?: boolean;
   getDeletedId(id: string): void;
   toggleDeleteModal(): void;
+  editActive(active: any): void;
 }
 
 const StyledHeader = styled.div`
@@ -42,7 +43,7 @@ const StyledButtons = styled.div`
 `;
 
 const TableDataShow = (props: IHeaderProps) => {
-  const { data, headerData, onClick } = props;
+  const { data, headerData, onClick,editActive } = props;
 
   return (
     <DataTable rows={data} headers={headerData}>
@@ -64,12 +65,17 @@ const TableDataShow = (props: IHeaderProps) => {
                       <>
                         <TableCell key={cell.id}>
                           <StyledButtons>
-                            <Button size="small">Խմբագրել</Button>
+                            <Button size="small"
+                              onClick = {()=>{
+                                console.log(data.find((d: any) => d.id === row.id), row._id);
+                                editActive(data.find((d: any) => d.id === row.id));
+                              }}
+                            >Խմբագրել</Button>
                             <Button
                               size="small"
                               kind="danger"
                               onClick={() => {
-                                console.log(row.id, row._id);
+                                console.log(data.find((d: any) => d.id === row.id), row._id);
                                 props.getDeletedId(row.id);
                                 props.toggleDeleteModal();
                               }}

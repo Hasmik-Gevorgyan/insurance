@@ -35,6 +35,8 @@ interface IActivesState {
   isModalOpen: boolean;
   isdeleteModalOpen: boolean;
   id: string;
+  kind: "add" | "edit";
+  editableActive: any;
 }
 
 class Actives extends Component<IActivesProps, IActivesState> {
@@ -48,12 +50,15 @@ class Actives extends Component<IActivesProps, IActivesState> {
       isModalOpen: false,
       isdeleteModalOpen: false,
       id: '',
+      kind: "add",
+      editableActive: {}
     };
 
     this.GetActivesTransactions = this.GetActivesTransactions.bind(this);
     this.GetActivesTypes = this.GetActivesTypes.bind(this);
     this.onChangeSwitch = this.onChangeSwitch.bind(this);
     this.deleteActive = this.deleteActive.bind(this);
+    this.editActive = this.editActive.bind(this)
   }
 
   componentDidMount() {
@@ -73,7 +78,6 @@ class Actives extends Component<IActivesProps, IActivesState> {
       })
         .then(response => {
           response.json().then(data => {
-            console.log(data);
             let chartData: any = [];
             data = data.map((item: any) => {
               item.name = item.activeName.hy;
@@ -126,7 +130,6 @@ class Actives extends Component<IActivesProps, IActivesState> {
             this.setState({
               activesTransactions: [...this.state.activesTransactions, ...data],
             });
-            console.log(data);
           });
         })
         .catch(error => console.log('error', error));
@@ -153,9 +156,33 @@ class Actives extends Component<IActivesProps, IActivesState> {
         }),
       })
         .then(response => {
-          response.json().then(data => {
-            console.log(data);
-          });
+          this.GetActivesTransactions()
+        })
+        .catch(error => console.log('error', error));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async editActive(data: any) {
+    try {
+      await fetch(`http://localhost:4000/app/insurance/active/${data.id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          value: data.value,
+          name: data.name,
+          profit: data.profit,
+          date: new Date(data.date),
+        }),
+      })
+        .then(response => {
+          this.GetActivesTransactions()
         })
         .catch(error => console.log('error', error));
     } catch (error) {
@@ -174,7 +201,9 @@ class Actives extends Component<IActivesProps, IActivesState> {
           'Content-Type': 'application/json',
         },
       })
-        .then(response => {})
+        .then(response => {
+          this.GetActivesTransactions()
+        })
         .catch(error => console.log('error', error));
     } catch (error) {
       console.log(error);
@@ -205,6 +234,19 @@ class Actives extends Component<IActivesProps, IActivesState> {
     });
   };
 
+  editActiveKind = (active: any) => {
+    this.setState({
+      kind: "edit",
+      editableActive: active,
+      isModalOpen: true
+    })
+  }
+
+  changeKind=()=>{
+    this.setState({
+      kind: "add",
+    })
+  }
   render() {
     return (
       <div className="container">
@@ -213,6 +255,7 @@ class Actives extends Component<IActivesProps, IActivesState> {
           buttonName={'Ավելացնել Ակտիվ'}
           onClick={this.toggleModal}
           onChange={this.onChangeSwitch}
+          changeKind = {this.changeKind}
         />
         <StyledActiveBody className="bx--row">
           <div className="bx--col-lg-10">
@@ -223,6 +266,7 @@ class Actives extends Component<IActivesProps, IActivesState> {
                 onClick={() => {}}
                 getDeletedId={this.getDeletedId}
                 toggleDeleteModal={this.toggleDeleteModal}
+                editActive = {this.editActiveKind}
                 isChangable
               />
             ) : (
@@ -233,6 +277,7 @@ class Actives extends Component<IActivesProps, IActivesState> {
                 getDeletedId={this.getDeletedId}
                 toggleDeleteModal={this.toggleDeleteModal}
                 isChangable={false}
+                editActive = {this.editActiveKind}
               />
             )}
             {this.state.switchName === 'Գործարքներ' && (
@@ -253,12 +298,14 @@ class Actives extends Component<IActivesProps, IActivesState> {
         </StyledActiveBody>
         {this.state.activeTypes.length > 0 && this.state.isModalOpen && (
           <ModalComponent
-            kind="add"
+            kind={this.state.kind}
             open={this.state.isModalOpen}
-            header="Add Active"
+            header={this.state.kind === "add" ? "Ավելացնել" : "Խմբագրել"}
             types={this.state.activeTypes}
             onClick={this.toggleModal}
             onSave={this.saveActive}
+            editableActive = {this.state.editableActive}
+            onEdit = {this.editActive}
           />
         )}
         {this.state.isdeleteModalOpen && (

@@ -24,7 +24,7 @@ import {
   HeaderContainer,
 } from 'carbon-components-react/lib/components/UIShell';
 
-import { Finance16 } from '@carbon/icons-react';
+import { Finance16,DataFormat16,CropHealth16 } from '@carbon/icons-react';
 import Actives from './pages/Actives';
 import Optimisation from './pages/Optimisation';
 import './declare_modules.d.ts';
@@ -35,7 +35,7 @@ import { regression } from './functional/allPossibleRegressions/index';
 const SimpleSimplex = require('simple-simplex');
 
 type IAppOwnProps = IAppProps & RouteComponentProps<any>;
-type pages = 'actives' | 'optimisation';
+type pages = 'actives' | 'optimisation'| 'reliability';
 interface IAppProps {
   // hhhh: string;
   // kk: number;
@@ -66,7 +66,7 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
       constraints: [
         {
           namedVector: { a: 1, b: 1, c: 1 },
-          constraint: '>=',
+          constraint: '<=',
           constant: 100,
         },
         {
@@ -92,7 +92,7 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
     console.log({
       solution: result.solution,
       isOptimal: result.details.isOptimal,
-    });
+    },result);
     const result1 = regression([
       [40, 27, 89, 21, 42],
       [40, 27, 88, 25, 37],
@@ -198,6 +198,7 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
                     >
                       Պորտֆել
                     </SideNavLink>
+
                   </SideNavItems>
                 </SideNav>
               </Header>
@@ -217,6 +218,7 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
               Ակտիվներ
             </SideNavLink>
             <SideNavLink
+              renderIcon = {DataFormat16}
               aria-current={this.state.currentPage === 'optimisation' && 'page'}
               onClick={() => {
                 this.changePage('optimisation');
@@ -226,6 +228,17 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
             >
               Պորտֆել
             </SideNavLink>
+            <SideNavLink
+              renderIcon = {CropHealth16}
+              aria-current={this.state.currentPage === 'reliability' && 'page'}
+              onClick={() => {
+                this.changePage('reliability');
+
+                this.props?.history.push('/reliability');
+              }}
+            >
+              Հուասալիություն
+            </SideNavLink>            
           </SideNavItems>
         </SideNav>
         <Content style={{ marginLeft: window.screen.width < 1055 && '0' }}>
@@ -235,6 +248,9 @@ class App extends React.PureComponent<IAppOwnProps, IControlComponentState> {
             </Route>
             <Route path="/optimisation">
               <Optimisation />
+            </Route>
+            <Route path="/reliability">
+              
             </Route>
             <Route path="/">
               {/* <Home /> */}

@@ -8,8 +8,9 @@ import { kindOfSwitches } from '../pages/Actives/options';
 interface IHeaderProps {
   switches: kindOfSwitches[];
   buttonName: string;
-  onClick(isopenModal: boolean): void;
+  onClick(): void;
   onChange(name: string): void;
+  changeKind(): void;
 }
 
 const StyledHeader = styled.div`
@@ -23,7 +24,7 @@ const StyledButton = styled.div`
 `;
 
 const HeaderComponent = (props: IHeaderProps) => {
-  const { switches, buttonName, onClick, onChange } = props;
+  const { switches, buttonName, onClick, onChange,changeKind } = props;
 
   return (
     <StyledHeader className="bx--row">
@@ -38,7 +39,7 @@ const HeaderComponent = (props: IHeaderProps) => {
         })}
       </ContentSwitcher>
       <StyledButton className="bx--col-lg-7 bx--col-md-3">
-        <Button size="field" onClick={onClick}>
+        <Button size="field" onClick={()=>{onClick();changeKind()}}>
           {buttonName}
         </Button>
       </StyledButton>

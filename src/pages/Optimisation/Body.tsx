@@ -16,11 +16,12 @@ import { lineChartOptions } from '../Actives/options';
 import { LineChart } from '@carbon/charts-react';
 import { handleDateFormat } from '../../helperFunctions';
 
-interface IHeaderProps {
+interface IBodyProps {
   headerData: any[];
   data: any;
   // chartData: any;
   regression: any;
+  toggleModal(): void;
 }
 
 const headerR = [
@@ -76,8 +77,8 @@ const StyledButton = styled.div`
   }
 `;
 
-const BodyForPortfelio = (props: IHeaderProps) => {
-  const { data, headerData, regression } = props;
+const BodyForPortfelio = (props: IBodyProps) => {
+  const { data, headerData, regression, toggleModal } = props;
   let regressionData = [];
   if (Object.keys(regression).length > 0) {
     regressionData = regression.data[5].r.map((r: any) => {
@@ -155,7 +156,7 @@ const BodyForPortfelio = (props: IHeaderProps) => {
             </StyledCharts> */}
         <StyledRegressionModel>Y=23.3+0.4𝑋4</StyledRegressionModel>
         <StyledButton>
-          <Button size="field">Օպտիմալացնել</Button>
+          <Button size="field" onClick = {toggleModal}>Օպտիմալացնել</Button>
         </StyledButton>
       </div>
     </StyledBody>
