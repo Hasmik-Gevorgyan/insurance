@@ -252,7 +252,7 @@ class Actives extends Component<IActivesProps, IActivesState> {
       <div className="container">
         <HeaderComponent
           switches={switches}
-          buttonName={'Ավելացնել Ակտիվ'}
+          buttonName={this.state.switchName === 'Գործարքներ' ? 'Ավելացնել Ակտիվ': ""}
           onClick={this.toggleModal}
           onChange={this.onChangeSwitch}
           changeKind = {this.changeKind}

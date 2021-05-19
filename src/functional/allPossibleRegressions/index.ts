@@ -4,8 +4,9 @@ const F_Table = 4.38;
 
 export function regression(data: number[][]) {
   let average = getAverage(data);
+  let standardDeviation = getstandardDeviation(data);
   let correlationMatrix = getCorrelationMatrix(data, average);
-  let combinationMatrixes = getCombinationMatrixes(correlationMatrix);
+  let combinationMatrixes = getCombinationMatrixes(correlationMatrix,average,standardDeviation);
 
   return getFishersValues(combinationMatrixes, data.length);
 }
@@ -82,7 +83,7 @@ function getCorrelationMatrix(data: number[][], average: number[]) {
   return correlationMatrix;
 }
 
-function getCombinationMatrixes(correlationMatrix: number[][]) {
+function getCombinationMatrixes(correlationMatrix: number[][],average: number[],standardDeviation: number[]) {
   let length = correlationMatrix[0].length - 1;
   let combinations = Math.pow(2, length);
   var temp = [];
@@ -107,11 +108,22 @@ function getCombinationMatrixes(correlationMatrix: number[][]) {
         }
       }
       const qInv = inv(newcomb);
+      let model = '';
+      let b0 = average[0];
+
+      for(let i = 1; i< temp.length; i++) {
+        let item = (-(qInv[0][i]/qInv[0][0]) * (standardDeviation[0]/standardDeviation[temp[i]]));
+        model +=  (item > 0 ?' + ': ' ') + item.toFixed(3) + 'X' + temp[i];
+        b0 = b0 - item * average[temp[i]];
+      }
+      
+      model = 'Y = ' + b0.toFixed(3) + model;
       combinationMatrixes.push({
         r: newcomb,
         q: qInv,
         r2: 1 - 1 / qInv[0][0],
         members: temp,
+        model,
       });
     }
   }
@@ -155,7 +167,6 @@ function groupData(combinationMatrixes: any) {
       grouped[combination.members.length] = combination;
     }
   });
-  // console.log(grouped)
 
   return grouped;
 }

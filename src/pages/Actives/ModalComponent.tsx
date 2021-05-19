@@ -39,7 +39,6 @@ function ModalComponent({ ...props }) {
           titleText="Ակտիվ"
           // selectedItem = {name}
           onChange={(item: any) => {
-            console.log(item.selectedItem)
             setName(item.selectedItem.activeName.en);
           }}
         />
@@ -49,7 +48,6 @@ function ModalComponent({ ...props }) {
           datePickerType="single"
           maxDate={new Date()}
           onChange={(date: any) => {
-            console.log(date);
             setDate(getDateFormat(new Date(date[0])));
           }}
         >

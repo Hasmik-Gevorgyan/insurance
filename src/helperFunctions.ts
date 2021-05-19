@@ -1,7 +1,7 @@
 export function handleDateFormat(date: Date) {
   return (
-    (date.getUTCDate() < 10 ? '0' : '') +
-    date.getUTCDate() +
+    (date.getDate() < 10 ? '0' : '') +
+    date.getDate() +
     '/' +
     (date.getMonth() + 1 < 10 ? '0' : '') +
     (date.getMonth() + 1) +

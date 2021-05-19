@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ComposedModal,
   ModalHeader,
   ModalBody,
-  NumberInput,
   ModalFooter,
-  Dropdown,
-  DatePicker,
-  DatePickerInput,
 } from 'carbon-components-react';
 import { Button } from 'carbon-components-react';
 

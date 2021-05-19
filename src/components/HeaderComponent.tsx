@@ -39,9 +39,11 @@ const HeaderComponent = (props: IHeaderProps) => {
         })}
       </ContentSwitcher>
       <StyledButton className="bx--col-lg-7 bx--col-md-3">
+        {buttonName !== "" && 
         <Button size="field" onClick={()=>{onClick();changeKind()}}>
           {buttonName}
         </Button>
+        }
       </StyledButton>
     </StyledHeader>
   );

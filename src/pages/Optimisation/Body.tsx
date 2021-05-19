@@ -12,14 +12,10 @@ import {
   TableCell,
 } from 'carbon-components-react';
 import { Button } from 'carbon-components-react';
-import { lineChartOptions } from '../Actives/options';
-import { LineChart } from '@carbon/charts-react';
-import { handleDateFormat } from '../../helperFunctions';
 
 interface IBodyProps {
   headerData: any[];
   data: any;
-  // chartData: any;
   regression: any;
   toggleModal(): void;
 }
@@ -91,7 +87,6 @@ const BodyForPortfelio = (props: IBodyProps) => {
         id: r[0],
       };
     });
-    console.log(regression.data[5], regressionData);
   }
 
   return (
@@ -151,10 +146,16 @@ const BodyForPortfelio = (props: IBodyProps) => {
             </DataTable>
           </div>
         )}
-        {/* <StyledCharts>
-                <LineChart data={data} options={lineChartOptions as any} />
-            </StyledCharts> */}
-        <StyledRegressionModel>Y=23.3+0.4𝑋4</StyledRegressionModel>
+        {Object.keys(regression).length && 
+          <StyledRegressionModel>
+            {Object.keys(regression.selected).length > 0 ?
+              regression.selected.model
+              
+          :
+          regression.data[Object.keys(regression.data)[Object.keys(regression.data).length-1]].model
+
+          }          
+          </StyledRegressionModel>}
         <StyledButton>
           <Button size="field" onClick = {toggleModal}>Օպտիմալացնել</Button>
         </StyledButton>

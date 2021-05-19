@@ -1,28 +1,10 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import { themes } from '../../styling';
 import '@carbon/charts/styles.css';
 import Header from './Header';
 import { getDateFormat, checkLastFriday } from '../../helperFunctions';
 import BodyForPortfelio from './Body';
 import { regression } from '../../functional/allPossibleRegressions';
 import OptimizeModal from './OptimizeModal';
-const SimpleSimplex = require('simple-simplex');
-
-
-const StyledActiveBody = styled.div`
-  margin-top: ${themes.spacing.spacing04};
-`;
-
-const StyledMoreButton = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: ${themes.spacing.spacing04};
-
-  > button {
-    padding-right: ${themes.spacing.spacing04};
-  }
-`;
 
 export type kindIntervals = 'month' | 'week';
 
@@ -37,7 +19,7 @@ interface IOptimisationState {
   interval: kindIntervals;
   regression: any;
   isOpenModal: boolean;
-  simplex: any;
+  headerActive: any
 }
 
 class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
@@ -52,7 +34,7 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
       interval: 'week',
       regression: {},
       isOpenModal: false,
-      simplex: {}
+      headerActive: [],
     };
     this.GetActivesTypes = this.GetActivesTypes.bind(this);
     this.GetActivesTransactions = this.GetActivesTransactions.bind(this);
@@ -61,41 +43,7 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
   }
 
   componentDidMount() {
-    this.GetActivesTypes();
-    const solver = new SimpleSimplex({
-      objective: {
-        a: 70,
-        b: 210,
-        c: 140,
-      },
-      constraints: [
-        {
-          namedVector: { a: 1, b: 1, c: 1 },
-          constraint: '<=',
-          constant: 100,
-        },
-        {
-          namedVector: { a: 5, b: 4, c: 4 },
-          constraint: '<=',
-          constant: 480,
-        },
-        {
-          namedVector: { a: 40, b: 20, c: 30 },
-          constraint: '<=',
-          constant: 3200,
-        },
-      ],
-      optimizationType: 'max',
-    });
-
-    // call the solve method with a method name
-    const result = solver.solve({
-      methodName: 'simplex',
-    });
-
-    this.setState({
-      simplex: result,
-    })
+    this.GetActivesTypes();    
   }
 
   async GetActivesTypes() {
@@ -111,18 +59,19 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
       })
         .then(response => {
           response.json().then(data => {
-            data = data.map((item: any) => {
+            let headerActive = data.map((item: any) => {
               item.header = item.activeName.hy;
               item.key = item.activeName.en;
               item.id = item._id;
               return item;
             });
 
-            data.unshift({ key: 'profit', header: 'Շահույթ', activeName: { en: '', hy: '' } });
+            headerActive.unshift({ key: 'profit', header: 'Շահույթ', activeName: { en: '', hy: '' } });
 
             this.setState(
               {
                 activeTypes: data,
+                headerActive
               },
               () => {
                 this.GetActivesTransactions();
@@ -171,6 +120,8 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
     }
   }
 
+
+
   getGroupedData(data: any) {
     const grouped: any = {};
     data.forEach((active: any) => {
@@ -212,9 +163,7 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
       return row;
     });
 
-    console.log(reg);
 
-    console.log(regression(reg));
     this.setState({
       regression: regression(reg),
     });
@@ -256,6 +205,7 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
     })
   }
   render() {
+
     return (
       <div className="container">
         <Header
@@ -266,15 +216,16 @@ class Optimisation extends Component<IOptimisationProps, IOptimisationState> {
         />
         <BodyForPortfelio
           data={this.state.tableData}
-          headerData={this.state.activeTypes}
+          headerData={this.state.headerActive}
           regression={this.state.regression}
           toggleModal = {this.toggleModal}
-          // chartData = {this.state.actives}
         />
         {this.state.isOpenModal &&
         <OptimizeModal open={this.state.isOpenModal} 
           toggleModal = {this.toggleModal}
-          simplex = {this.state.simplex}
+          activeTypes = {this.state.activeTypes}
+          regression = {this.state.regression}
+          active = {this.state.tableData[0]}
         />}
       </div>
     );

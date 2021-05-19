@@ -24,11 +24,6 @@ interface IHeaderProps {
   editActive(active: any): void;
 }
 
-const StyledHeader = styled.div`
-  padding-bottom: ${themes.spacing.spacing05};
-  border-bottom: ${themes.spacing.spacing01} solid ${themes.colors.border01};
-`;
-
 const StyledButtons = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -37,13 +32,13 @@ const StyledButtons = styled.div`
     padding-right: ${themes.spacing.spacing04};
   }
 
-  &>button: first-child {
+  & > :first-child {
     margin-right: ${themes.spacing.spacing03};
   }
 `;
 
 const TableDataShow = (props: IHeaderProps) => {
-  const { data, headerData, onClick,editActive } = props;
+  const { data, headerData,editActive } = props;
 
   return (
     <DataTable rows={data} headers={headerData}>
