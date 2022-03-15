@@ -107,7 +107,7 @@ function getSimplexData( activeTypes: any,selected: any, active: any) {
 		sumA += active[actives[i].activeName.en];
 	}
 
-	Cn = '( '+ Cn + ') '+ ' * ' +(100/sumA )+' >= 0.49';
+	Cn = "( "+ Cn + ") "+ " * " +(100/sumA )+" >= 0.49";
 	constraints.push(commonConstrait, Cn);
   
 	const result = calculateSimplex(objective,constraints);
